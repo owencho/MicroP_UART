@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "Gpio.h"
+#include "Clock.h"
 #include "Nvic.h"
 #include "Syscfg.h"
 #include "Exti.h"
@@ -50,7 +51,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,21 +95,93 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  // RCC APB1 and APB2 peripheral clock enable reg
+  enableUSART1();
+  enableUSART6();
+  enableUART5();
   //pg 183 to enable uart clock
-  // RCC APB1 peripheral clock enable reg
-  // gpio_AFRL & AFRH
-  //UART_4 PORT PA0 , PA1
-  //UART_8 PE0 ,PE1
-  //set oversampling before baud due to function
-  // oversampling by 16
-  //set baud with BRR
-  //Parity see first bit11 , and bit 10 of CR1
-  //enable TE (bit 3, CR1) for transmitter
-  //enable RE (bit 2 ,CR1) for receiver
-  // receiver wakeup depends (bit1 ,CR1)
-  //CR1 bit 13 enable USART for both UART
+  //set GpioG as alternate mode
+  enableGpioG();
+  gpioSetMode(gpioG, PIN_7, GPIO_ALT);
+  gpioSetMode(gpioG, PIN_14, GPIO_ALT);
+  gpioSetMode(gpioG, PIN_9, GPIO_ALT);
+  gpioSetPinSpeed(gpioG,PIN_7,HIGH_SPEED);
+  gpioSetPinSpeed(gpioG,PIN_14,HIGH_SPEED);
+  gpioSetPinSpeed(gpioG,PIN_9,HIGH_SPEED);
 
+  enableGpioA();
+  //set GpioA as alternate mode
+  gpioSetMode(gpioA, PIN_8, GPIO_ALT);
+  gpioSetMode(gpioA, PIN_9, GPIO_ALT);
+  gpioSetMode(gpioA, PIN_10, GPIO_ALT);
+  gpioSetPinSpeed(gpioA,PIN_8,HIGH_SPEED);
+  gpioSetPinSpeed(gpioA,PIN_9,HIGH_SPEED);
+  gpioSetPinSpeed(gpioA,PIN_10,HIGH_SPEED);
+
+  enableGpio(PORT_C);
+  gpioSetMode(gpioC, PIN_12, GPIO_ALT);  //set GpioC as alternate mode
+  gpioSetPinSpeed(gpioC,PIN_12,HIGH_SPEED);
+
+  enableGpio(PORT_D);
+  gpioSetMode(gpioD, PIN_2, GPIO_ALT);  //set GpioC as alternate mode
+  gpioSetPinSpeed(gpioC,PIN_2,HIGH_SPEED);
+
+
+  //set alternate function
+  gpioSetAlternateFunction(gpioA ,PIN_8 ,AF7); //set PA8 as USART1_CK
+  gpioSetAlternateFunction(gpioA ,PIN_9 ,AF7); //set PA9 as USART1_TX
+  gpioSetAlternateFunction(gpioA ,PIN_10 ,AF7); //set PA10 as USART1_RX
+
+  gpioSetAlternateFunction(gpioC ,PIN_12 ,AF8); //set PC12 as USART5_TX
+  gpioSetAlternateFunction(gpioD ,PIN_2 ,AF8); //set PD2 as USART5_RX
+
+  gpioSetAlternateFunction(gpioG ,PIN_7 ,AF8); //set PG7 as USART6_CK
+  gpioSetAlternateFunction(gpioG ,PIN_14 ,AF8); //set PG14 as USART6_TX
+  gpioSetAlternateFunction(gpioG ,PIN_9 ,AF8); //set PG9 as USART6_RX
+
+  //set oversampling before baud due to function
+  setUsartOversamplingMode(usart1,OVER_16);
+  setUsartOversamplingMode(uart5,OVER_16);
+  setUsartOversamplingMode(usart6,OVER_16);
+  //set baud with BRR
+  usartSetBaudRate(usart1,115);
+  usartSetBaudRate(uart5,115);
+  usartSetBaudRate(usart6,115);
+  //Parity see first bit11 , and bit 10 of CR1
+  usartEnableParityControl(usart1);
+  usartEnableParityControl(uart5);
+  usartEnableParityControl(usart6);
+  setUsartParityMode(usart1,ODD_PARITY);
+  setUsartParityMode(uart5,ODD_PARITY);
+  setUsartParityMode(usart6,ODD_PARITY);
+  // Set Address
+  usartSetUsartAddressNode(usart1,1);
+  usartSetUsartAddressNode(uart5,5);
+  usartSetUsartAddressNode(usart6,6);
+  //set wakeup mode
+  // receiver wakeup depends (bit1 ,CR1)
+  setUsartWakeupMode(usart1,MUTE_MODE);
+  setUsartWakeupMode(uart5,MUTE_MODE);
+  setUsartWakeupMode(usart6,MUTE_MODE);
+  //set Half duplex
+  usartSetHalfDuplexMode(usart1,ENABLE_MODE);
+  usartSetHalfDuplexMode(uart5,ENABLE_MODE);
+  usartSetHalfDuplexMode(usart6,ENABLE_MODE);
+  //enable interrupt
+  usartEnableInterrupt(uart5,RXNE_INTERRUPT);
+  usartEnableInterrupt(usart6,RXNE_INTERRUPT);
+  //enable TE (bit 3, CR1) for transmitter
+  usartEnableTransmission(usart1);
+  usartEnableTransmission(uart5);
+  usartEnableTransmission(usart6);
+  //enable RE (bit 2 ,CR1) for receiver
+  usartEnableReceiver(usart1);
+  usartEnableReceiver(uart5);
+  usartEnableReceiver(usart6);
+  //CR1 bit 13 enable USART for both UART
+  enableUsart(usart1);
+  enableUsart(uart5);
+  enableUsart(usart6);
   ///CR2
   //LIN mode to detect break
   // STOP bit configure how long is STOP bit
@@ -119,13 +192,6 @@ int main(void)
   //mostly interrupt enable
   //enable DMA TR and RX
   // half-duplex selection
-  enableGpioG();
-  gpioSetMode(gpioG, PIN_13, GPIO_OUT);
-  gpioSetPinSpeed(gpioG,PIN_13,HIGH_SPEED);
-
-  enableGpioA();
-  gpioSetMode(gpioA, PIN_0, GPIO_IN);
-  gpioSetPinSpeed(gpioG,PIN_0,HIGH_SPEED);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,7 +199,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  data = 5;
+	  usartSend(usart1,data);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
