@@ -204,7 +204,14 @@ void SysTick_Handler(void)
 
 /* USER CODE BEGIN 1 */
 void UART5_IRQHandler(void){
-	usartReceive(uart5);
+	char uart5Receive ;
+	uart5Receive = usartReceive(uart5);
+	gpioWriteBit(gpioG, PIN_13, 1);
+}
+
+void USART6_IRQHandler(void){
+	char usart6Receive ;
+	usart6Receive = usartReceive(usart6);
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
