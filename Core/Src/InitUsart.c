@@ -41,29 +41,6 @@ void initUsart1(){
 	  enableUsart(usart1);
 }
 
-/*
-void initUart5(){
-	  //set alternate function
-	  gpioSetAlternateFunction(gpioC ,PIN_12 ,AF8); //set PC12 as USART5_TX
-	  gpioSetAlternateFunction(gpioD ,PIN_2 ,AF8); //set PD2 as USART5_RX
-
-	  // RCC APB1 and APB2 peripheral clock enable reg
-	  enableUART5();
-	  //pg 183 to enable uart clock
-
-	  //set oversampling before baud due to function
-	  setUsartOversamplingMode(uart5,OVER_16);
-	  //set baud with BRR
-	  usartSetBaudRate(uart5,115);
-	  //Parity see first bit11 , and bit 10 of CR1
-	  usartEnableParityControl(uart5);
-	  setUsartParityMode(uart5,ODD_PARITY);
-	  //enable TE (bit 3, CR1) for transmitter
-	  usartEnableTransmission(uart5);
-	  //CR1 bit 13 enable USART for both UART
-	  enableUsart(uart5);
-}
-*/
 void initUart5(){
 	  //set alternate function
 	  gpioSetAlternateFunction(gpioC ,PIN_12 ,AF8); //set PC12 as USART5_TX
