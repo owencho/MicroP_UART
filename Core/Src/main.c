@@ -42,7 +42,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-void initUart5();
+void configureGpio();
+void configureButtonInterrupt();
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -96,41 +97,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  configureGpio();
+  configureButtonInterrupt();
   /* USER CODE BEGIN 2 */
-  enableGpioG();
-  gpioSetMode(gpioG, PIN_7, GPIO_ALT);
-  gpioSetMode(gpioG, PIN_14, GPIO_ALT);
-  gpioSetMode(gpioG, PIN_9, GPIO_ALT);
-  gpioSetPinSpeed(gpioG,PIN_7,HIGH_SPEED);
-  gpioSetPinSpeed(gpioG,PIN_14,HIGH_SPEED);
-  gpioSetPinSpeed(gpioG,PIN_9,HIGH_SPEED);
 
-  //set LED
-  gpioSetMode(gpioG, PIN_13, GPIO_OUT);
-  gpioSetPinSpeed(gpioG,PIN_13,HIGH_SPEED);
-
-
-  enableGpioA();
-  //set GpioA as alternate mode
-  gpioSetMode(gpioA, PIN_8, GPIO_ALT);
-  gpioSetMode(gpioA, PIN_9, GPIO_ALT);
-  gpioSetMode(gpioA, PIN_10, GPIO_ALT);
-  gpioSetPinSpeed(gpioA,PIN_8,HIGH_SPEED);
-  gpioSetPinSpeed(gpioA,PIN_9,HIGH_SPEED);
-  gpioSetPinSpeed(gpioA,PIN_10,HIGH_SPEED);
-
-  enableGpio(PORT_C);
-  gpioSetMode(gpioC, PIN_12, GPIO_ALT);  //set GpioC as alternate mode
-  gpioSetPinSpeed(gpioC,PIN_12,HIGH_SPEED);
-
-  enableGpio(PORT_D);
-  gpioSetMode(gpioD, PIN_2, GPIO_ALT);  //set GpioC as alternate mode
-  gpioSetPinSpeed(gpioD,PIN_2,HIGH_SPEED);
-
-  //enable usb LED
-  enableGpio(PORT_B);
-  gpioSetMode(gpioB, PIN_13, GPIO_OUT);
-  gpioSetPinSpeed(gpioB,PIN_13,HIGH_SPEED);
   //init usart
   initUsart1();
   initUart5();
@@ -142,13 +112,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  usartSend(usart1,5+(1<<6));
-	  usartSend(usart1,10);
-	  usartSend(usart1,40);
 
-	  usartSend(usart1,6+(1<<6));
-	  usartSend(usart1,10);
-	  usartSend(usart1,40);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -206,7 +170,49 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void configureButtonInterrupt(){
+	  //enable EXTI Line0 interrupt
+	  nvicEnableInterrupt(6);
+	  extiSetInterruptMaskRegister(exti,PIN_0,NOT_MASKED);
+	  extiSetRisingTriggerInterrupt(exti,PIN_0,RISING_ENABLED);
+	  extiSetFallingTriggerInterrupt(exti,PIN_0,FALLING_ENABLED);
+	  syscfgExternalInterruptConfig(syscfg,PIN_0, PORT_A);
+}
+void configureGpio(){
+	  enableGpioG();
+	  gpioSetMode(gpioG, PIN_7, GPIO_ALT);
+	  gpioSetMode(gpioG, PIN_14, GPIO_ALT);
+	  gpioSetMode(gpioG, PIN_9, GPIO_ALT);
+	  gpioSetPinSpeed(gpioG,PIN_7,HIGH_SPEED);
+	  gpioSetPinSpeed(gpioG,PIN_14,HIGH_SPEED);
+	  gpioSetPinSpeed(gpioG,PIN_9,HIGH_SPEED);
 
+	  //set LED
+	  gpioSetMode(gpioG, PIN_13, GPIO_OUT);
+	  gpioSetPinSpeed(gpioG,PIN_13,HIGH_SPEED);
+
+	  //button
+	  enableGpioA();
+	  gpioSetMode(gpioA, PIN_0, GPIO_IN);
+	  gpioSetPinSpeed(gpioA,PIN_0,HIGH_SPEED);
+
+	  //set GpioA as alternate mode
+	  gpioSetMode(gpioA, PIN_8, GPIO_ALT);
+	  gpioSetMode(gpioA, PIN_9, GPIO_ALT);
+	  gpioSetMode(gpioA, PIN_10, GPIO_ALT);
+	  gpioSetPinSpeed(gpioA,PIN_8,HIGH_SPEED);
+	  gpioSetPinSpeed(gpioA,PIN_9,HIGH_SPEED);
+	  gpioSetPinSpeed(gpioA,PIN_10,HIGH_SPEED);
+
+	  enableGpio(PORT_C);
+	  gpioSetMode(gpioC, PIN_12, GPIO_ALT);  //set GpioC as alternate mode
+	  gpioSetPinSpeed(gpioC,PIN_12,HIGH_SPEED);
+
+	  enableGpio(PORT_D);
+	  gpioSetMode(gpioD, PIN_2, GPIO_ALT);  //set GpioC as alternate mode
+	  gpioSetPinSpeed(gpioD,PIN_2,HIGH_SPEED);
+
+}
 
 
 /* USER CODE END 4 */

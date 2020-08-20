@@ -19,9 +19,12 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "Irq.h"
+#include "Exti.h"
 #include "main.h"
 #include "Usart.h"
 #include "Common.h"
+#include "ButtonSM.h"
 #include "Gpio.h"
 #include "Rcc.h"
 #include "BaseAddress.h"
@@ -213,6 +216,15 @@ void USART6_IRQHandler(void){
 	char usart6Receive ;
 	usart6Receive = usartReceive(usart6);
 	gpioWriteBit(gpioB, PIN_13, 1);
+}
+
+
+void EXTI0_IRQHandler(void){
+	disableIRQ();
+	extiSetInterruptMaskRegister(exti,PIN_0,MASKED);
+
+	extiSetPendingRegister(exti,PIN_0);
+	enableIRQ();
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
