@@ -127,6 +127,10 @@ int main(void)
   gpioSetMode(gpioD, PIN_2, GPIO_ALT);  //set GpioC as alternate mode
   gpioSetPinSpeed(gpioD,PIN_2,HIGH_SPEED);
 
+  //enable usb LED
+  enableGpio(PORT_B);
+  gpioSetMode(gpioB, PIN_13, GPIO_OUT);
+  gpioSetPinSpeed(gpioB,PIN_13,HIGH_SPEED);
   //init usart
   initUsart1();
   initUart5();
@@ -139,11 +143,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 	  usartSend(usart1,5+(1<<6));
-	  usartSend(usart1,20);
-	  usartSend(usart1,30);
+	  usartSend(usart1,10);
+	  usartSend(usart1,40);
+
 	  usartSend(usart1,6+(1<<6));
-	  usartSend(usart1,20);
-	  usartSend(usart1,30);
+	  usartSend(usart1,10);
+	  usartSend(usart1,40);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

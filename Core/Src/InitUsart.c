@@ -28,12 +28,12 @@ void initUsart1(){
 	  //set oversampling before baud due to function
 	  setUsartOversamplingMode(usart1,OVER_16);
 	  //set baud with BRR
-	  usartSetBaudRate(usart1,115);
+	  usartSetBaudRate(usart1,115200);
 	  //Parity see first bit11 , and bit 10 of CR1
 	  usartEnableParityControl(usart1);
 	  setUsartParityMode(usart1,ODD_PARITY);
 	  //set Half duplex
-	  //usartSetHalfDuplexMode(usart1,ENABLE_MODE);
+	  usartSetHalfDuplexMode(usart1,ENABLE_MODE);
 	  //enable TE (bit 3, CR1) for transmitter
 	  usartEnableTransmission(usart1);
 	  //usartEnableReceiver(usart1);
@@ -76,7 +76,7 @@ void initUart5(){
 	  //set oversampling before baud due to function
 	  setUsartOversamplingMode(uart5,OVER_16);
 	  //set baud with BRR
-	  usartSetBaudRate(uart5,115);
+	  usartSetBaudRate(uart5,115200);
 	  //Parity see first bit11 , and bit 10 of CR1
 	  usartEnableParityControl(uart5);
 	  setUsartParityMode(uart5,ODD_PARITY);
@@ -87,7 +87,7 @@ void initUart5(){
 	  //set receiver wakeup mode as mute
 	  usartSetReceiverWakeupMode(uart5,MUTE_MODE);
 	  //set Half duplex
-	  //usartSetHalfDuplexMode(uart5,ENABLE_MODE);
+	  usartSetHalfDuplexMode(uart5,ENABLE_MODE);
 	  //enable interrupt
 	  nvicEnableInterrupt(53);
 	  usartEnableInterrupt(uart5,RXNE_INTERRUPT);
@@ -108,7 +108,7 @@ void initUsart6(){
 	  //set oversampling before baud due to function
 	  setUsartOversamplingMode(usart6,OVER_16);
 	  //set baud with BRR
-	  usartSetBaudRate(usart6,115);
+	  usartSetBaudRate(usart6,115200);
 	  //Parity see first bit11 , and bit 10 of CR1
 	  usartEnableParityControl(usart6);
 	  setUsartParityMode(usart6,ODD_PARITY);
@@ -119,7 +119,7 @@ void initUsart6(){
 	  //set receiver wakeup mode as mute
 	  usartSetReceiverWakeupMode(usart6,MUTE_MODE);
 	  //set Half duplex
-	  //usartSetHalfDuplexMode(usart6,ENABLE_MODE);
+	  usartSetHalfDuplexMode(usart6,ENABLE_MODE);
 	  //enable interrupt
 	  nvicEnableInterrupt(71);
 	  usartEnableInterrupt(usart6,RXNE_INTERRUPT);

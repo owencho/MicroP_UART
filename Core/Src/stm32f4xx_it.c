@@ -212,6 +212,7 @@ void UART5_IRQHandler(void){
 void USART6_IRQHandler(void){
 	char usart6Receive ;
 	usart6Receive = usartReceive(usart6);
+	gpioWriteBit(gpioB, PIN_13, 1);
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
