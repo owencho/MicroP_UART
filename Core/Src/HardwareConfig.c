@@ -11,6 +11,7 @@
 #include "Syscfg.h"
 #include "Exti.h"
 #include "Rcc.h"
+#include "Adc.h"
 #include "Common.h"
 #include "BaseAddress.h"
 
@@ -19,7 +20,6 @@ void configureButtonInterrupt(){
 	  nvicEnableInterrupt(6);
 	  extiSetInterruptMaskRegister(exti,PIN_0,NOT_MASKED);
 	  extiSetRisingTriggerInterrupt(exti,PIN_0,RISING_ENABLED);
-	  extiSetFallingTriggerInterrupt(exti,PIN_0,FALLING_ENABLED);
 	  syscfgExternalInterruptConfig(syscfg,PIN_0, PORT_A);
 }
 void configureGpio(){
@@ -40,8 +40,12 @@ void configureGpio(){
 	  gpioSetMode(gpioB, PIN_13, GPIO_OUT);
 	  gpioSetPinSpeed(gpioB,PIN_13,HIGH_SPEED);
 
-	  //button
+	  // set pin 1 as input of the ADC signal
 	  enableGpioA();
+	  gpioSetMode(gpioA, PIN_1, GPIO_ANALOG);
+	  gpioSetPinSpeed(gpioA,PIN_1,HIGH_SPEED);
+
+	  //button
 	  gpioSetMode(gpioA, PIN_0, GPIO_IN);
 	  gpioSetPinSpeed(gpioA,PIN_0,HIGH_SPEED);
 
@@ -52,6 +56,7 @@ void configureGpio(){
 	  gpioSetPinSpeed(gpioA,PIN_8,HIGH_SPEED);
 	  gpioSetPinSpeed(gpioA,PIN_9,HIGH_SPEED);
 	  gpioSetPinSpeed(gpioA,PIN_10,HIGH_SPEED);
+
 
 	  //Uart 5
 	  enableGpio(PORT_C);

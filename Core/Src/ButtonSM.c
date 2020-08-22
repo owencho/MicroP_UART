@@ -12,8 +12,9 @@
 
 extern UsartInfo usartInfo[] ;
 BlinkyState buttonState = BUTTON_WAIT;
-int ADCvalue;
-char adcRead [] = {ADC_ADDRESS , 0x21, 0xE };
+int adcValue;
+char adcRead [] = {ADC_ADDRESS,0x21, 0xE };
+char ledControl [] = {LED_ADDRESS , 0x21, 0xE };
 void handleButtonSM(){
 	switch(buttonState){
 		case BUTTON_WAIT:
@@ -26,7 +27,6 @@ void handleButtonSM(){
 		break;
 
 		case WAIT_ADC_VALUE:
-			adcValue = handleADCvalue();
 			usartSendMessage(MASTER,ledControl);
 		break;
 

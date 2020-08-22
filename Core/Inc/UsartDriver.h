@@ -11,6 +11,7 @@
 
 
 #define PACKET_SIZE 0
+#define ADDRESS_PACKET 1
 
 #define MASTER_ADDRESS 0
 #define ADC_ADDRESS 1

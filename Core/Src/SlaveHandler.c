@@ -20,5 +20,5 @@ void handleADCSlave(char *data){
 	if(!checkCommand(data)){
 		return;
 	}
-	adcSetStartRegularConversion(AdcReg* adc);
+	adcSetStartRegularConversion(adc1);
 }

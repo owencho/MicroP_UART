@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "Irq.h"
+#include "Adc.h"
 #include "Exti.h"
 #include "UsartDriver.h"
 #include "main.h"
@@ -31,6 +32,8 @@
 #include "BaseAddress.h"
 #include "stm32f4xx_it.h"
 #include "ButtonSM.h"
+#include <stdlib.h>
+#include <string.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -54,6 +57,7 @@
 /* USER CODE BEGIN PV */
 extern UsartInfo usartInfo[];
 int txCount = 0;
+extern int interrupt;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -209,7 +213,16 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
-
+/*
+void ADC_IRQHandler(void){
+	int newAdcValue ;
+	char * buffer;
+	char msg[]={MASTER,0x21,0xE};
+	newAdcValue = adcReadRegularDataReg(adc1);
+	itoa(newAdcValue,buffer,10);
+	strncat(msg, buffer, 4);
+}
+*/
 void UART5_IRQHandler(void){
 	UsartInfo * info = &usartInfo[ADC_SLAVE];
 	UsartRegs * usart = info->usart;
@@ -239,7 +252,7 @@ void UART5_IRQHandler(void){
 		   }
 
 		   if(info->rxLength == info->rxCount){
-
+			   handleADCSlave(receiveBuffer);
 			   info->rxCount = 0;
 		   }
 	}
@@ -269,7 +282,7 @@ void USART1_IRQHandler(void){
 			   info->txTurn = 0;
 			   info->txCount = 0;
 			   info->requestTxPacket = 0;
-			   handleButtonSM();
+			   //handleButtonSM();
 		   }
 	}
 	else{
@@ -288,9 +301,9 @@ void USART1_IRQHandler(void){
 
 void EXTI0_IRQHandler(void){
 	disableIRQ();
+	extiSetPendingRegister(exti,PIN_0);
 	extiSetInterruptMaskRegister(exti,PIN_0,MASKED);
 	handleButtonSM();
-	extiSetPendingRegister(exti,PIN_0);
 	enableIRQ();
 }
 /* USER CODE END 1 */

@@ -114,13 +114,13 @@ int main(void)
   usartReceiveMessage(SEND_ADDRESS,17);
 
   /* USER CODE END 2 */
-
+ // char adcRead [] = {ADC_ADDRESS , 0x21, 0xE };
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  //usartSendMessage(MASTER,adcRead);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
