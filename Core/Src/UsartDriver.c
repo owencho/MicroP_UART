@@ -28,7 +28,7 @@ UsartInfo usartInfo[] = {
 };
 
 void handleUsartSend(UsartRegs * usart , char * transmitBuffer , int count){
-	if(!count){
+	if(count == ADDRESS_PACKET){
 		usartSend(usart,transmitBuffer[count]+ (1<<8));
 	}
 	else{
@@ -54,14 +54,14 @@ void initUsartInfo(){
 	usartInfoConfig(SEND_SLAVE,uart4);
 	usartInfoConfig(SERIAL_SLAVE,uart8);
 }
-void usartSendMessage(UsartPort port,char * message){
+void usartSendMessage(UsartPort port,char * message,int length){
 	disableIRQ();
 	UsartInfo * info =&usartInfo[port];
 
     if(!hasRequestedTxPacket(info)){
         info->requestTxPacket = 1;
     	info->usartTxBuffer = message;
-    	info->txLength = findPacketLength(message);
+    	info->txLength = length;
     	info->txTurn = 1;
     	usartEnableTransmission(info->usart);
     	usartEnableInterrupt(info->usart,TRANS_COMPLETE);

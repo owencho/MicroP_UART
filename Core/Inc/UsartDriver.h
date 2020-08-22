@@ -10,7 +10,8 @@
 #include "Usart.h"
 
 
-#define PACKET_SIZE 0
+#define CMD_PACKET 2
+
 #define ADDRESS_PACKET 1
 
 #define MASTER_ADDRESS 0
@@ -43,6 +44,6 @@ typedef enum{
 
 void initUsartInfo();
 void handleUsartSend(UsartRegs * usart , char * transmitBuffer , int count);
-void usartSendMessage(UsartPort port,char * message);
+void usartSendMessage(UsartPort port,char * message,int length);
 int findPacketLength(char data[]);
 #endif /* INC_USARTDRIVER_H_ */

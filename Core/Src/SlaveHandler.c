@@ -5,20 +5,38 @@
  *      Author: academic
  */
 #include "Adc.h"
-
+#include "Gpio.h"
+#include "Irq.h"
+#include "Timer.h"
+/*
 int checkCommand(char *data){
-	char command = *(data + 1);
-	char command_bar = *(data + 2);
+	int command = *(data + 1);
+	int command_bar = *(data + 2);
 
-	if(command != (!command_bar)){
+	if((~command) != command_bar){
 		return 0;
 	}
 	return 1;
 }
-
+*/
 void handleADCSlave(char *data){
-	if(!checkCommand(data)){
-		return;
-	}
+	disableIRQ();
+	adcEnableEOCInterrupt(adc1);
 	adcSetStartRegularConversion(adc1);
+	enableIRQ();
+}
+
+void handleLEDSlave(char *data){
+	disableIRQ();
+	char command = *(data+1);
+	if(command == 0x10){
+		gpioWriteBit(gpioG, PIN_13, 0);
+	}
+	else if(command == 0x11){
+		gpioWriteBit(gpioG, PIN_13, 1);
+	}
+	else if(command == 0x12){
+		timerEnableInterrupt(timer3 , CC3OF_FLAG);
+	}
+	enableIRQ();
 }

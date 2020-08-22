@@ -100,6 +100,7 @@ int main(void)
   MX_GPIO_Init();
   configureGpio();
   configureButtonInterrupt();
+  configureAdc1();
   /* USER CODE BEGIN 2 */
 
   //init usart
@@ -109,12 +110,12 @@ int main(void)
   initUart4();
   initUart8();
   initUsartInfo();
-  usartReceiveMessage(ADC_ADDRESS,3);
-  usartReceiveMessage(LED_ADDRESS,3);
-  usartReceiveMessage(SEND_ADDRESS,17);
+  usartReceiveMessage(ADC_SLAVE,3);
+  usartReceiveMessage(LED_SLAVE,3);
+  usartReceiveMessage(SEND_SLAVE,17);
 
   /* USER CODE END 2 */
- // char adcRead [] = {ADC_ADDRESS , 0x21, 0xE };
+  //char adcRead [] = {ADC_ADDRESS , 0x21, 0xE };
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

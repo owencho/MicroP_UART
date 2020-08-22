@@ -14,6 +14,7 @@
 #include "Adc.h"
 #include "Common.h"
 #include "BaseAddress.h"
+#include "Timer.h"
 
 void configureButtonInterrupt(){
 	  //enable EXTI Line0 interrupt
@@ -193,7 +194,7 @@ void initUsartSlave(UsartRegs * usart ,int slaveAddress, int nvicNumber){
 void configureAdc1(){
 	  enableAdc1();
 	  //enable interrupt
-	  adcEnableEOCInterrupt(adc1);
+	  //adcEnableEOCInterrupt(adc1);
 	  adcSetScanMode(adc1,ENABLE_MODE);
 	  nvicEnableInterrupt(18);
 	  adcSetADCResolution(adc1,ADC_RES_12_BIT);
@@ -204,4 +205,33 @@ void configureAdc1(){
 	  adcSetSingleSequenceRegister(adc1,CHANNEL_1,1);
 	  adcEnableADCConversion(adc1);
 	  //adcSetStartRegularConversion(adc1);
+}
+
+void configureTimer3(){
+	  enableTimer3();
+	  //enable nvic interrupt
+	  nvicEnableInterrupt(18);
+
+	  timerSetControlRegister(timer3,(ARR_ENABLE | TIMER_UP_COUNT |
+			  	  	  	  	  	  	  TIMER_ONE_PULSE_DISABLE |TIMER_COUNTER_ENABLE |
+									  T1_CH1_SELECT| MASTER_MODE_COMP_OC3REF|OC3_OUT_LOW));
+	  //ARR disable
+	  //ARR reg is buffered
+	  //Up count
+	  //one pulse mode disabled
+	  //counter enabled
+	  //CH1 is connected to T1
+	  // Master Mode is routed to Output 3
+	  timerSetSlaveMasterRegister(timer3,SLAVE_MODE| SMS_DISABLED | TRIGGER_FIL_T1);
+	  //slave mode disabled
+	  timerSetCompareCaptureModeRegister(timer3,(CC3_OUTPUT |OC3_MODE_TOGGLE));
+	  // CC3 channel is configured as toggle mode
+
+	  timerSetCompareCaptureEnableRegister(timer3,(OC3_ENABLE|OC3_ACTIVELOW));
+
+	  //to generate 2khz with 50% duty cycle
+	  timerWritePrescaler(timer3,0);
+	  timerWriteAutoReloadReg(timer3, 45000);
+	  timerWriteCapComReg3(timer3 , 22499);
+
 }
