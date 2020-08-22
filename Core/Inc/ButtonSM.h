@@ -16,6 +16,6 @@ typedef enum{
     SEND_STRING,
 } BlinkyState;
 
-void ButtonSM();
+void handleButtonSM();
 
 #endif /* INC_BUTTONSM_H_ */

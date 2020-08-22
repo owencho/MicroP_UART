@@ -8,21 +8,26 @@
 #include "ButtonSM.h"
 #include "Exti.h"
 #include "Usart.h"
+#include "UsartDriver.h"
+
+extern UsartInfo usartInfo[] ;
 BlinkyState buttonState = BUTTON_WAIT;
-char adcRead [] = {0x12 , 0x21, 0xE };
-void ButtonSM(){
+int ADCvalue;
+char adcRead [] = {ADC_ADDRESS , 0x21, 0xE };
+void handleButtonSM(){
 	switch(buttonState){
 		case BUTTON_WAIT:
-			sendPacket();
+			usartSendMessage(MASTER,adcRead);
 			buttonState = READ_ADC;
 		break;
 
 		case READ_ADC:
-
+			buttonState = WAIT_ADC_VALUE;
 		break;
 
 		case WAIT_ADC_VALUE:
-
+			adcValue = handleADCvalue();
+			usartSendMessage(MASTER,ledControl);
 		break;
 
 		case SEND_CONTROL_LED:
@@ -34,3 +39,4 @@ void ButtonSM(){
 		break;
 	}
 }
+

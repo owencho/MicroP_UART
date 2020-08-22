@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "Irq.h"
 #include "Exti.h"
+#include "UsartDriver.h"
 #include "main.h"
 #include "Usart.h"
 #include "Common.h"
@@ -29,6 +30,7 @@
 #include "Rcc.h"
 #include "BaseAddress.h"
 #include "stm32f4xx_it.h"
+#include "ButtonSM.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -50,7 +52,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern UsartInfo usartInfo[];
+int txCount = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -206,10 +209,40 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
+
 void UART5_IRQHandler(void){
-	char uart5Receive ;
-	uart5Receive = usartReceive(uart5);
-	gpioWriteBit(gpioG, PIN_13, 1);
+	UsartInfo * info = &usartInfo[ADC_SLAVE];
+	UsartRegs * usart = info->usart;
+	char * receiveBuffer = info->usartRxBuffer;
+	char * transmitBuffer = info->usartTxBuffer;
+
+	if(info->txTurn){
+		   if(info->txLength != info->txCount){
+			   usartClearTcFlag(usart);
+			   handleUsartSend(usart,transmitBuffer,info->txCount);
+			   info->txCount++;
+		   }else{
+			   gpioWriteBit(gpioB, PIN_13, 1);
+			   usartDisableInterrupt(usart,TRANS_COMPLETE);
+			   usartDisableTransmission(usart);
+			   usartEnableReceiver(usart);
+			   info->txTurn = 0;
+			   info->txCount = 0;
+			   info->requestTxPacket = 0;
+
+		   }
+	}
+	else{
+		   if(info->rxLength != info->rxCount){
+			   receiveBuffer[info->rxCount] = usartReceive(usart);
+			   info->rxCount ++;
+		   }
+
+		   if(info->rxLength == info->rxCount){
+
+			   info->rxCount = 0;
+		   }
+	}
 }
 
 void USART6_IRQHandler(void){
@@ -218,11 +251,45 @@ void USART6_IRQHandler(void){
 	gpioWriteBit(gpioB, PIN_13, 1);
 }
 
+void USART1_IRQHandler(void){
+	UsartInfo * info = &usartInfo[MASTER];
+	UsartRegs * usart = info->usart;
+	char * receiveBuffer = info->usartRxBuffer;
+	char * transmitBuffer = info->usartTxBuffer;
+
+	if(info->txTurn){
+		   if(info->txLength != info->txCount){
+			   usartClearTcFlag(usart);
+			   handleUsartSend(usart,transmitBuffer,info->txCount);
+			   info->txCount++;
+		   }else{
+			   usartDisableInterrupt(usart,TRANS_COMPLETE);
+			   usartDisableTransmission(usart);
+			   usartEnableReceiver(usart);
+			   info->txTurn = 0;
+			   info->txCount = 0;
+			   info->requestTxPacket = 0;
+			   handleButtonSM();
+		   }
+	}
+	else{
+		   if(info->rxLength != info->rxCount){
+			   receiveBuffer[info->rxCount] = usartReceive(usart);
+			   info->rxCount ++;
+		   }
+
+		   if(info->rxLength == info->rxCount){
+			   handleButtonSM();
+			   info->rxCount = 0;
+		   }
+	}
+}
+
 
 void EXTI0_IRQHandler(void){
 	disableIRQ();
 	extiSetInterruptMaskRegister(exti,PIN_0,MASKED);
-
+	handleButtonSM();
 	extiSetPendingRegister(exti,PIN_0);
 	enableIRQ();
 }
