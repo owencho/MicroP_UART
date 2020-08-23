@@ -8,6 +8,15 @@
 #include "Gpio.h"
 #include "Irq.h"
 #include "Timer.h"
+#include "SlaveHandler.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <malloc.h>
+#include <stdarg.h>
+#include <string.h>
+
+extern UsartInfo usartInfo[] ;
 /*
 int checkCommand(char *data){
 	int command = *(data + 1);
@@ -42,3 +51,42 @@ void handleLEDSlave(char *data){
 	}
 	enableIRQ();
 }
+
+void handleSerialSlave(char *data){
+	disableIRQ();
+	char serial [4];
+	strcpy(serial, (data+DATA_PACKET));
+	serialSend(PRINT_SLAVE,"adc value is %d",serial);
+	enableIRQ();
+}
+
+void freeMessage(char * msg){
+    if(msg)
+        free(msg);
+}
+
+void serialSend(UsartPort port,char *message,...){
+	disableIRQ();
+    int actualLength;
+    char* buffer;
+
+    va_list arg;
+    va_start(arg, message);
+
+    actualLength = vsnprintf(NULL,0, message, arg);
+    buffer =malloc(actualLength + 1);
+    vsnprintf(buffer,actualLength + 1, message, arg);
+    va_end(arg);
+	UsartInfo * info = &usartInfo[port];
+    usartSendSerialMessage(info,buffer);
+    freeMessage(buffer);
+    enableIRQ();
+}
+
+void usartSendSerialMessage(UsartInfo * info,char *message){
+	usartEnableInterrupt(info->usart,TRANS_COMPLETE);
+	info->usartTxBuffer = message;
+	info->txTurn = 1;
+	info->txCount = 0;
+}
+

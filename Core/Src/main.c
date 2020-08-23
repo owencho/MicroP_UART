@@ -28,6 +28,7 @@
 #include "HardwareConfig.h"
 #include "Rcc.h"
 #include "UsartDriver.h"
+#include "SlaveHandler.h"
 #include "Usart.h"
 #include "Common.h"
 #include "BaseAddress.h"
@@ -114,16 +115,16 @@ int main(void)
   //usartReceiveMessage(MASTER,3);
   usartReceiveMessage(ADC_SLAVE,3);
   usartReceiveMessage(LED_SLAVE,3);
-  usartReceiveMessage(SEND_SLAVE,17);
+  usartReceiveMessage(SERIAL_SLAVE,7);
 
   /* USER CODE END 2 */
-  //char adcRead [] = {0x21,MASTER_ADDRESS , 0x21, 0xE };
+ // char adcRead [] = {0x21, SERIAL_ADDRESS , 0x21, 0xE };
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-	  //usartSendMessage(ADC_SLAVE,adcRead,4);
+	  //serialSend(PRINT_SLAVE,char *message,...);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

@@ -24,8 +24,8 @@ UsartInfo usartInfo[] = {
   [MASTER]={NULL},
   [ADC_SLAVE]={NULL},
   [LED_SLAVE]={NULL},
-  [SEND_SLAVE]={NULL},
   [SERIAL_SLAVE]={NULL},
+  [PRINT_SLAVE]={NULL},
 };
 
 void handleUsartSend(UsartRegs * usart , char * transmitBuffer , int count){
@@ -50,12 +50,12 @@ void usartInfoConfig(UsartPort port,UsartRegs * usart){
 }
 
 void initUsartInfo(){
-	memset(&usartInfo[SERIAL_SLAVE],0,sizeof(usartInfo));
+	memset(&usartInfo[PRINT_SLAVE],0,sizeof(usartInfo));
 	usartInfoConfig(MASTER,usart1);
 	usartInfoConfig(ADC_SLAVE,uart5);
 	usartInfoConfig(LED_SLAVE,usart6);
-	usartInfoConfig(SEND_SLAVE,uart4);
-	usartInfoConfig(SERIAL_SLAVE,uart8);
+	usartInfoConfig(SERIAL_SLAVE,uart4);
+	usartInfoConfig(PRINT_SLAVE,uart8);
 }
 void usartSendMessage(UsartPort port,char * message,int length){
 	disableIRQ();

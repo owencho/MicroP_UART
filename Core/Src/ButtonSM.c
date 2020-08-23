@@ -17,7 +17,9 @@ UsartInfo * info = &usartInfo[MASTER];
 BlinkyState buttonState = BUTTON_WAIT;
 char adcRead [] = {0x21,ADC_ADDRESS,0x21, 0xE};
 char ledControl [] = {0x21,LED_ADDRESS , 0x10, 0xE };
-char adcPacket [3];
+char serialSlave [] = {0x21,SERIAL_ADDRESS , 0x10, 0xE };
+char adcPacket [4];
+char serialPacket [8];
 void handleButtonSM(){
 	switch(buttonState){
 		case BUTTON_WAIT:
@@ -41,12 +43,15 @@ void handleButtonSM(){
 		break;
 
 		case SEND_CONTROL_LED:
-			extiSetInterruptMaskRegister(exti,PIN_0,NOT_MASKED);
-			buttonState = BUTTON_WAIT;
+			memcpy(serialPacket, serialSlave, 4);
+			memcpy(&serialPacket[4], adcPacket, 4);
+			usartSendMessage(MASTER,serialPacket,8);
+			buttonState = SEND_STRING;
 		break;
 
 		case SEND_STRING:
-			buttonState = SEND_STRING;
+			extiSetInterruptMaskRegister(exti,PIN_0,NOT_MASKED);
+			buttonState = BUTTON_WAIT;
 		break;
 	}
 }
