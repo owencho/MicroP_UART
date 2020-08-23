@@ -54,9 +54,9 @@ void handleLEDSlave(char *data){
 
 void handleSerialSlave(char *data){
 	disableIRQ();
-	char serial [4];
-	strcpy(serial, (data+DATA_PACKET));
-	serialSend(PRINT_SLAVE,"adc value is %d",serial);
+	int adcValue;
+	adcValue = strtol(data+DATA_PACKET, NULL, 10);
+	serialSend(PRINT_SLAVE,"adc value is %d \r\n",adcValue);
 	enableIRQ();
 }
 
@@ -84,9 +84,11 @@ void serialSend(UsartPort port,char *message,...){
 }
 
 void usartSendSerialMessage(UsartInfo * info,char *message){
+	disableIRQ();
 	usartEnableInterrupt(info->usart,TRANS_COMPLETE);
 	info->usartTxBuffer = message;
 	info->txTurn = 1;
 	info->txCount = 0;
+	enableIRQ();
 }
 

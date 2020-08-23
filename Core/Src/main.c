@@ -121,11 +121,10 @@ int main(void)
  // char adcRead [] = {0x21, SERIAL_ADDRESS , 0x21, 0xE };
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+ // serialSend(PRINT_SLAVE,"lol");
   while (1)
   {
     /* USER CODE END WHILE */
-	  usartSend(uart8,123);
-	  // serialSend(PRINT_SLAVE,"lol");
 	  //usartSendMessage(MASTER,adcRead,4);
     /* USER CODE BEGIN 3 */
   }

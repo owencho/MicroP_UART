@@ -278,14 +278,14 @@ void UART5_IRQHandler(void){
 }
 
 void UART8_IRQHandler(void){
-	UsartInfo * info = &usartInfo[SERIAL_SLAVE];
+	UsartInfo * info = &usartInfo[PRINT_SLAVE];
 	UsartRegs * usart = info->usart;
 	char * txBuffer = info->usartTxBuffer;
 	if(info->txTurn){
  		   if(txBuffer[info->txCount] != '\0'){
- 			   usartClearTcFlag(usart);
 			   usartSend(usart,txBuffer[info->txCount]);
 			   info->txCount++;
+ 			   usartClearTcFlag(usart);
 		   }else{
 			   usartDisableInterrupt(usart,TRANS_COMPLETE);
 			   info->txCount = 0;
