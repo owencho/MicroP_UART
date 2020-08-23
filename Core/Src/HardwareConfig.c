@@ -99,7 +99,7 @@ void initUsart1(){
 	  //set baud with BRR
 	  usartSetBaudRate(usart1,115200);
 	  // Set Address as slave 1
-	  usartSetUsartAddressNode(usart1,0);
+	  usartSetUsartAddressNode(usart1,10);
 	  // set as address mark for wake up
 	  setUsartWakeupMode(usart1,ADDRESS_MARK);
 	  //set receiver wakeup mode as mute
@@ -211,7 +211,7 @@ void configureAdc1(){
 void configureTimer3(){
 	  enableTimer3();
 	  //enable nvic interrupt
-	  nvicEnableInterrupt(18);
+	  nvicEnableInterrupt(29);
 
 	  timerSetControlRegister(timer3,(ARR_ENABLE | TIMER_UP_COUNT |
 			  	  	  	  	  	  	  TIMER_ONE_PULSE_DISABLE |TIMER_COUNTER_ENABLE |
@@ -230,9 +230,9 @@ void configureTimer3(){
 
 	  timerSetCompareCaptureEnableRegister(timer3,(OC3_ENABLE|OC3_ACTIVELOW));
 
-	  //to generate 2khz with 50% duty cycle
-	  timerWritePrescaler(timer3,0);
-	  timerWriteAutoReloadReg(timer3, 45000);
-	  timerWriteCapComReg3(timer3 , 22499);
+	  //to generate 50hz with 50% duty cycle
+	  timerWritePrescaler(timer3,27);
+	  timerWriteAutoReloadReg(timer3, 65535);
+	  timerWriteCapComReg3(timer3 , 32767);
 
 }

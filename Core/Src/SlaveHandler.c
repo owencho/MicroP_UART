@@ -30,14 +30,15 @@ void handleLEDSlave(char *data){
 	disableIRQ();
 	char command = *(data+1);
 	if(command == 0x10){
+		timerDisableInterrupt(timer3 , CC3_INT);
 		gpioWriteBit(gpioG, PIN_13, 0);
 	}
 	else if(command == 0x11){
-		gpioWriteBit(gpioG, PIN_13, 1);
+		timerEnableInterrupt(timer3 ,CC3_INT);
 	}
 	else if(command == 0x12){
-		gpioWriteBit(gpioG, PIN_13, 0);
-		//timerEnableInterrupt(timer3 , CC3OF_FLAG);
+		timerDisableInterrupt(timer3 , CC3_INT);
+		gpioWriteBit(gpioG, PIN_13, 1);
 	}
 	enableIRQ();
 }

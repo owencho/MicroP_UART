@@ -29,6 +29,7 @@
 #include "ButtonSM.h"
 #include "Gpio.h"
 #include "Rcc.h"
+#include "Timer.h"
 #include "BaseAddress.h"
 #include "stm32f4xx_it.h"
 #include "ButtonSM.h"
@@ -214,11 +215,16 @@ void SysTick_Handler(void)
 
 /* USER CODE BEGIN 1 */
 char newMsg[8];
+
+void TIM3_IRQHandler(void){
+	gpioToggleBit(gpioG, PIN_13);
+	timerResetFlags(timer3 ,CC3IF_FLAG);
+}
+
 void ADC_IRQHandler(void){
 	int newAdcValue ;
 	char buffer[4];
-	char msg[]={0x21,LED_ADDRESS,0x21,0xE};
-	//char msg[]={0x21,MASTER,0x21,0xE};
+	char msg[]={0x21,MASTER_ADDRESS,0x21,0xE};
 	newAdcValue = adcReadRegularDataReg(adc1);
 	itoa(newAdcValue,buffer,10);
 	memcpy(newMsg, msg, 4);
@@ -259,6 +265,7 @@ void UART5_IRQHandler(void){
 				   strcpy(data, info->usartRxBuffer);
 				   usartDisableReceiver(usart);
 				   handleADCSlave(receiveBuffer);
+				   info->requestRxPacket = 0;
 			   }
 			   info->rxCount = 0;
 		   }
@@ -269,7 +276,7 @@ void USART6_IRQHandler(void){
 	UsartInfo * info = &usartInfo[LED_SLAVE];
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
-	char data[7];
+	char data[3];
    if(info->rxLength != info->rxCount){
 	   receiveBuffer[info->rxCount] = usartReceive(usart);
 	   info->rxCount ++;
@@ -277,15 +284,17 @@ void USART6_IRQHandler(void){
 
    if(info->rxLength == info->rxCount){
 	   if(*receiveBuffer == LED_ADDRESS){
-		   strcpy(data, info->usartRxBuffer);
-		   usartDisableReceiver(usart);
+		   //strcpy(data, info->usartRxBuffer);
+		   //usartDisableReceiver(usart);
 		   handleLEDSlave(receiveBuffer);
+		   info->requestRxPacket = 0;
 	   }
 	   info->rxCount = 0;
    }
 }
 
 void USART1_IRQHandler(void){
+	disableIRQ();
 	UsartInfo * info = &usartInfo[MASTER];
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
@@ -297,9 +306,11 @@ void USART1_IRQHandler(void){
 			   handleUsartSend(usart,transmitBuffer,info->txCount);
 			   info->txCount++;
 		   }else{
+			   usartDisableInterrupt(usart,RXNE_INTERRUPT);
 			   usartDisableInterrupt(usart,TRANS_COMPLETE);
 			   usartDisableTransmission(usart);
-			   info->txTurn = 0;
+			   usartDisableReceiver(usart);
+			   info->usartTxBuffer = NULL;
 			   info->txCount = 0;
 			   info->requestTxPacket = 0;
 			   handleButtonSM();
@@ -313,14 +324,18 @@ void USART1_IRQHandler(void){
 
 		   if(info->rxLength == info->rxCount){
 			   if(*receiveBuffer == MASTER_ADDRESS){
+				   gpioToggleBit(gpioB, PIN_13);
 				   strcpy(data, info->usartRxBuffer);
+				   usartDisableInterrupt(usart,RXNE_INTERRUPT);
 				   usartDisableReceiver(usart);
+				   usartDisableTransmission(usart);
 				   handleButtonSM();
+				   info->requestRxPacket = 0;
 			   }
 			   info->rxCount = 0;
-			   info->txTurn = 1;
 		   }
 	}
+	enableIRQ();
 }
 
 

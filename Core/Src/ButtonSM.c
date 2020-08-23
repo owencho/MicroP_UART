@@ -17,7 +17,7 @@ UsartInfo * info = &usartInfo[MASTER];
 BlinkyState buttonState = BUTTON_WAIT;
 char adcRead [] = {0x21,ADC_ADDRESS,0x21, 0xE};
 char ledControl [] = {0x21,LED_ADDRESS , 0x10, 0xE };
-char adcPacket [8];
+char adcPacket [3];
 void handleButtonSM(){
 	switch(buttonState){
 		case BUTTON_WAIT:
@@ -26,12 +26,12 @@ void handleButtonSM(){
 		break;
 
 		case READ_ADC:
-			usartReceiveMessage(MASTER,8);
+			usartReceiveMessage(MASTER,7);
 			buttonState = WAIT_ADC_VALUE;
 		break;
 
 		case WAIT_ADC_VALUE:
-			strcpy(adcPacket, info->usartRxBuffer);
+			strcpy(adcPacket, (info->usartRxBuffer)+DATA_PACKET);
 			usartSendMessage(MASTER,ledControl,4);
 			ledControl[CMD_PACKET]++;
 			if(ledControl[CMD_PACKET]> 0x12){
@@ -41,7 +41,6 @@ void handleButtonSM(){
 		break;
 
 		case SEND_CONTROL_LED:
-		    gpioWriteBit(gpioB, PIN_13, 1);
 			extiSetInterruptMaskRegister(exti,PIN_0,NOT_MASKED);
 			buttonState = BUTTON_WAIT;
 		break;

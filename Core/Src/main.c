@@ -98,11 +98,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
+  /* USER CODE BEGIN 2 */
   configureGpio();
   configureButtonInterrupt();
   configureAdc1();
-  /* USER CODE BEGIN 2 */
-
+  configureTimer3();
   //init usart
   initUsart1();
   initUart5();
@@ -113,7 +114,6 @@ int main(void)
   //usartReceiveMessage(MASTER,3);
   usartReceiveMessage(ADC_SLAVE,3);
   usartReceiveMessage(LED_SLAVE,3);
-  //usartReceiveMessage(LED_SLAVE,3);
   usartReceiveMessage(SEND_SLAVE,17);
 
   /* USER CODE END 2 */
@@ -123,7 +123,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  //usartSendMessage(MASTER,adcRead,4);
+	  //usartSendMessage(ADC_SLAVE,adcRead,4);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

@@ -11,10 +11,10 @@
 
 
 #define CMD_PACKET 2
-
+#define DATA_PACKET 3
 #define ADDRESS_PACKET 1
 
-#define MASTER_ADDRESS 0
+#define MASTER_ADDRESS 10
 #define ADC_ADDRESS 1
 #define LED_ADDRESS 2
 #define SEND_ADDRESS 3
@@ -26,6 +26,7 @@ struct UsartInfo {
 	char * usartTxBuffer;
 	char * usartRxBuffer;
 	int requestTxPacket;
+	int requestRxPacket;
 	int  txTurn;
 	int txLength;
 	int rxLength;

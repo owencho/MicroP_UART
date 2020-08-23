@@ -14,6 +14,7 @@
 #include <UsartDriver.h>
 
 #define hasRequestedTxPacket(info) ((info)->requestTxPacket)
+#define hasRequestedRxPacket(info) ((info)->requestRxPacket)
 
 int findPacketLength(char * data){
     return (sizeof(data)/sizeof(char));
@@ -43,6 +44,8 @@ void usartInfoConfig(UsartPort port,UsartRegs * usart){
     info->usartRxBuffer = malloc(sizeof(char)*64);
     info->txCount = 0;
     info->rxCount = 0;
+    info->requestTxPacket = 0;
+    info->requestRxPacket = 0;
     enableIRQ();
 }
 
@@ -73,10 +76,13 @@ void usartSendMessage(UsartPort port,char * message,int length){
 void usartReceiveMessage(UsartPort port,int size){
 	disableIRQ();
 	UsartInfo * info =&usartInfo[port];
-	info->rxLength = size;
-	info->txTurn = 0;
-	usartDisableTransmission(info->usart);
-	usartEnableReceiver(info->usart);
-	usartEnableInterrupt(info->usart,RXNE_INTERRUPT);
+	if(!hasRequestedRxPacket(info)){
+		info->requestRxPacket = 1;
+		info->rxLength = size;
+		info->txTurn = 0;
+		usartDisableTransmission(info->usart);
+		usartEnableReceiver(info->usart);
+		usartEnableInterrupt(info->usart,RXNE_INTERRUPT);
+	}
 	enableIRQ();
 }
