@@ -162,7 +162,21 @@ void initUart8(){
 	  // RCC APB1 and APB2 peripheral clock enable reg
 	  enableUART8();
 	  //configure uart5 as slave
-	  initUsartSlave(uart8 ,4, 83);
+	  setUsartOversamplingMode(uart8,OVER_16);
+	  //set baud with BRR
+	  usartSetBaudRate(uart8,115200);
+	  // Set Address as slave 1
+	  usartSetUsartAddressNode(uart8,10);
+	  //disable parity control
+	  usartDisableParityControl(uart8);
+	  //set 9 bit
+	  setUsartWordLength(uart8,DATA_9_BITS);
+	  //enable interrupt
+	  nvicEnableInterrupt(83);
+	  //enable transmission
+	  usartEnableTransmission(uart8);
+	  //CR1 bit 13 enable USART for both UART
+	  enableUsart(uart8);
 }
 
 void initUsartSlave(UsartRegs * usart ,int slaveAddress, int nvicNumber){

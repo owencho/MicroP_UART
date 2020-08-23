@@ -124,7 +124,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  //serialSend(PRINT_SLAVE,char *message,...);
+	  usartSend(uart8,123);
+	  // serialSend(PRINT_SLAVE,"lol");
+	  //usartSendMessage(MASTER,adcRead,4);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
