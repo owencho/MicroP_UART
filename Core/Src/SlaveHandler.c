@@ -36,7 +36,8 @@ void handleLEDSlave(char *data){
 		gpioWriteBit(gpioG, PIN_13, 1);
 	}
 	else if(command == 0x12){
-		timerEnableInterrupt(timer3 , CC3OF_FLAG);
+		gpioWriteBit(gpioG, PIN_13, 0);
+		//timerEnableInterrupt(timer3 , CC3OF_FLAG);
 	}
 	enableIRQ();
 }

@@ -19,6 +19,7 @@
 void configureButtonInterrupt(){
 	  //enable EXTI Line0 interrupt
 	  nvicEnableInterrupt(6);
+	  extiSetPendingRegister(exti,PIN_0);
 	  extiSetInterruptMaskRegister(exti,PIN_0,NOT_MASKED);
 	  extiSetRisingTriggerInterrupt(exti,PIN_0,RISING_ENABLED);
 	  syscfgExternalInterruptConfig(syscfg,PIN_0, PORT_A);
@@ -81,8 +82,8 @@ void configureGpio(){
 	  gpioSetMode(gpioE, PIN_0, GPIO_ALT);  //uart8_rx
 	  gpioSetPinSpeed(gpioE,PIN_0,HIGH_SPEED);
 
-	  gpioSetMode(gpioC, PIN_1, GPIO_ALT);  //uart8_tx
-	  gpioSetPinSpeed(gpioC,PIN_1,HIGH_SPEED);
+	  gpioSetMode(gpioE, PIN_1, GPIO_ALT);  //uart8_tx
+	  gpioSetPinSpeed(gpioE,PIN_1,HIGH_SPEED);
 }
 void initUsart1(){
 	  //set alternate function

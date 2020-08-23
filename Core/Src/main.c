@@ -110,18 +110,20 @@ int main(void)
   initUart4();
   initUart8();
   initUsartInfo();
+  //usartReceiveMessage(MASTER,3);
   usartReceiveMessage(ADC_SLAVE,3);
   usartReceiveMessage(LED_SLAVE,3);
+  //usartReceiveMessage(LED_SLAVE,3);
   usartReceiveMessage(SEND_SLAVE,17);
 
   /* USER CODE END 2 */
-  //char adcRead [] = {ADC_ADDRESS , 0x21, 0xE };
+  //char adcRead [] = {0x21,MASTER_ADDRESS , 0x21, 0xE };
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-	  //usartSendMessage(MASTER,adcRead);
+	  //usartSendMessage(MASTER,adcRead,4);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

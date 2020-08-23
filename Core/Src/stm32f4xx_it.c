@@ -217,7 +217,8 @@ char newMsg[8];
 void ADC_IRQHandler(void){
 	int newAdcValue ;
 	char buffer[4];
-	char msg[]={0x21,MASTER,0x21,0xE};
+	char msg[]={0x21,LED_ADDRESS,0x21,0xE};
+	//char msg[]={0x21,MASTER,0x21,0xE};
 	newAdcValue = adcReadRegularDataReg(adc1);
 	itoa(newAdcValue,buffer,10);
 	memcpy(newMsg, msg, 4);
@@ -232,19 +233,18 @@ void UART5_IRQHandler(void){
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
 	char * transmitBuffer = info->usartTxBuffer;
-
+	char data [3];
 	if(info->txTurn){
 		   if(info->txLength != info->txCount){
 			   usartClearTcFlag(usart);
 			   handleUsartSend(usart,transmitBuffer,info->txCount);
 			   info->txCount++;
 		   }else{
-			   gpioWriteBit(gpioB, PIN_13, 1);
 			   usartDisableInterrupt(usart,TRANS_COMPLETE);
-			   usartReceiveMessage(ADC_SLAVE,3);
 			   info->txTurn = 0;
 			   info->txCount = 0;
 			   info->requestTxPacket = 0;
+			   usartReceiveMessage(ADC_SLAVE,3);
 
 		   }
 	}
@@ -256,6 +256,7 @@ void UART5_IRQHandler(void){
 
 		   if(info->rxLength == info->rxCount){
 			   if(*receiveBuffer == ADC_ADDRESS){
+				   strcpy(data, info->usartRxBuffer);
 				   usartDisableReceiver(usart);
 				   handleADCSlave(receiveBuffer);
 			   }
@@ -268,7 +269,7 @@ void USART6_IRQHandler(void){
 	UsartInfo * info = &usartInfo[LED_SLAVE];
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
-
+	char data[7];
    if(info->rxLength != info->rxCount){
 	   receiveBuffer[info->rxCount] = usartReceive(usart);
 	   info->rxCount ++;
@@ -276,6 +277,7 @@ void USART6_IRQHandler(void){
 
    if(info->rxLength == info->rxCount){
 	   if(*receiveBuffer == LED_ADDRESS){
+		   strcpy(data, info->usartRxBuffer);
 		   usartDisableReceiver(usart);
 		   handleLEDSlave(receiveBuffer);
 	   }
@@ -288,7 +290,7 @@ void USART1_IRQHandler(void){
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
 	char * transmitBuffer = info->usartTxBuffer;
-
+	char data[7];
 	if(info->txTurn){
 		   if(info->txLength != info->txCount){
 			   usartClearTcFlag(usart);
@@ -296,6 +298,7 @@ void USART1_IRQHandler(void){
 			   info->txCount++;
 		   }else{
 			   usartDisableInterrupt(usart,TRANS_COMPLETE);
+			   usartDisableTransmission(usart);
 			   info->txTurn = 0;
 			   info->txCount = 0;
 			   info->requestTxPacket = 0;
@@ -310,12 +313,12 @@ void USART1_IRQHandler(void){
 
 		   if(info->rxLength == info->rxCount){
 			   if(*receiveBuffer == MASTER_ADDRESS){
-				   usartEnableTransmission(usart);
+				   strcpy(data, info->usartRxBuffer);
 				   usartDisableReceiver(usart);
 				   handleButtonSM();
 			   }
-
 			   info->rxCount = 0;
+			   info->txTurn = 1;
 		   }
 	}
 }
