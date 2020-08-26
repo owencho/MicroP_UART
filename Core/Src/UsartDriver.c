@@ -83,6 +83,7 @@ void usartReceiveMessage(UsartPort port,int size){
 		usartDisableTransmission(info->usart);
 		usartEnableReceiver(info->usart);
 		usartEnableInterrupt(info->usart,RXNE_INTERRUPT);
+		usartSetReceiverWakeupMode(info->usart,MUTE_MODE);
 	}
 	enableIRQ();
 }

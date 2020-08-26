@@ -241,6 +241,7 @@ void UART5_IRQHandler(void){
 	char * receiveBuffer = info->usartRxBuffer;
 	char * transmitBuffer = info->usartTxBuffer;
 	char data [3];
+	char test;
 	if(info->txTurn){
 		   if(info->txLength != info->txCount){
 			   usartClearTcFlag(usart);
@@ -260,6 +261,7 @@ void UART5_IRQHandler(void){
 	else{
 		   if(info->rxLength != info->rxCount){
 			   receiveBuffer[info->rxCount] = usartReceive(usart);
+			   //test = usartReceive(usart);
 			   info->rxCount ++;
 		   }
 
@@ -307,6 +309,7 @@ void UART4_IRQHandler(void){
 	   if(*receiveBuffer == SERIAL_ADDRESS){
 		   handleSerialSlave(receiveBuffer);
 		   info->requestRxPacket = 0;
+		   usartReceiveMessage(SERIAL_SLAVE,7);
 	   }
 	   info->rxCount = 0;
    }
@@ -326,6 +329,7 @@ void USART6_IRQHandler(void){
 	   if(*receiveBuffer == LED_ADDRESS){
 		   handleLEDSlave(receiveBuffer);
 		   info->requestRxPacket = 0;
+		   usartReceiveMessage(LED_SLAVE,3);
 	   }
 	   info->rxCount = 0;
    }
@@ -348,7 +352,7 @@ void USART1_IRQHandler(void){
 			   usartDisableInterrupt(usart,TRANS_COMPLETE);
 			   usartDisableTransmission(usart);
 			   usartDisableReceiver(usart);
-			   info->usartTxBuffer = NULL;
+			   //info->usartTxBuffer = NULL;
 			   info->txCount = 0;
 			   info->requestTxPacket = 0;
 			   handleButtonSM();

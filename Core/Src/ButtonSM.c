@@ -10,6 +10,7 @@
 #include "Usart.h"
 #include "UsartDriver.h"
 #include "Gpio.h"
+#include "String.h"
 #include <stdlib.h>
 
 extern UsartInfo usartInfo[] ;
@@ -34,11 +35,11 @@ void handleButtonSM(){
 
 		case WAIT_ADC_VALUE:
 			strcpy(adcPacket, (info->usartRxBuffer)+DATA_PACKET);
-			usartSendMessage(MASTER,ledControl,4);
 			ledControl[CMD_PACKET]++;
 			if(ledControl[CMD_PACKET]> 0x12){
 				ledControl[CMD_PACKET] = 0x10;
 			}
+			usartSendMessage(MASTER,ledControl,4);
 			buttonState = SEND_CONTROL_LED;
 		break;
 
