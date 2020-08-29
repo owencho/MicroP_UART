@@ -215,33 +215,31 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
-char newMsg[8];
 
 void TIM3_IRQHandler(void){
+	disableIRQ();
 	gpioToggleBit(gpioG, PIN_13);
 	timerResetFlags(timer3 ,CC3IF_FLAG);
+	enableIRQ();
 }
 
+char adcMessage[8]={0x21,MASTER_ADDRESS,0x21,0xE};
 void ADC_IRQHandler(void){
+	disableIRQ();
 	int newAdcValue ;
-	char buffer[4];
-	char msg[]={0x21,MASTER_ADDRESS,0x21,0xE};
 	newAdcValue = adcReadRegularDataReg(adc1);
-	itoa(newAdcValue,buffer,10);
-	memcpy(newMsg, msg, 4);
-	memcpy(&newMsg[4], buffer, 4);
+	*(int*)&adcMessage[4] = newAdcValue;
 	adcDisableEOCInterrupt(adc1);
-	usartSendMessage(ADC_SLAVE,newMsg,8);
-
+	usartSendMessage(ADC_SLAVE,adcMessage,8);
+	enableIRQ();
 }
 
 void UART5_IRQHandler(void){
+	disableIRQ();
 	UsartInfo * info = &usartInfo[ADC_SLAVE];
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
 	char * transmitBuffer = info->usartTxBuffer;
-	char data [3];
-	char test;
 	if(info->txTurn){
 		   if(info->txLength != info->txCount){
 			   usartClearTcFlag(usart);
@@ -261,12 +259,10 @@ void UART5_IRQHandler(void){
 	else{
 		   if(info->rxLength != info->rxCount){
 			   receiveBuffer[info->rxCount] = usartReceive(usart);
-			   //test = usartReceive(usart);
 			   info->rxCount ++;
 		   }
 
 		   if(info->rxLength == info->rxCount){
-			   strcpy(data, info->usartRxBuffer);
 			   if(*receiveBuffer == ADC_ADDRESS){
 				   usartDisableInterrupt(usart,RXNE_INTERRUPT);
 				   usartDisableReceiver(usart);
@@ -277,9 +273,11 @@ void UART5_IRQHandler(void){
 			   info->rxCount = 0;
 		   }
 	}
+	enableIRQ();
 }
 
 void UART8_IRQHandler(void){
+	disableIRQ();
 	UsartInfo * info = &usartInfo[PRINT_SLAVE];
 	UsartRegs * usart = info->usart;
 	char * txBuffer = info->usartTxBuffer;
@@ -294,28 +292,32 @@ void UART8_IRQHandler(void){
 			   info->txTurn = 0;
 		   }
 	}
+	enableIRQ();
 }
 
 void UART4_IRQHandler(void){
+	disableIRQ();
 	UsartInfo * info = &usartInfo[SERIAL_SLAVE];
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
-   if(info->rxLength != info->rxCount){
+	if(info->rxLength != info->rxCount){
 	   receiveBuffer[info->rxCount] = usartReceive(usart);
 	   info->rxCount ++;
-   }
+	}
 
-   if(info->rxLength == info->rxCount){
+	if(info->rxLength == info->rxCount){
 	   if(*receiveBuffer == SERIAL_ADDRESS){
 		   handleSerialSlave(receiveBuffer);
 		   info->requestRxPacket = 0;
 		   usartReceiveMessage(SERIAL_SLAVE,7);
 	   }
 	   info->rxCount = 0;
-   }
+	}
+   enableIRQ();
 }
 
 void USART6_IRQHandler(void){
+	disableIRQ();
 	UsartInfo * info = &usartInfo[LED_SLAVE];
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
@@ -333,6 +335,7 @@ void USART6_IRQHandler(void){
 	   }
 	   info->rxCount = 0;
    }
+   enableIRQ();
 }
 
 void USART1_IRQHandler(void){
@@ -341,7 +344,6 @@ void USART1_IRQHandler(void){
 	UsartRegs * usart = info->usart;
 	char * receiveBuffer = info->usartRxBuffer;
 	char * transmitBuffer = info->usartTxBuffer;
-	char data[7];
 	if(info->txTurn){
 		   if(info->txLength != info->txCount){
 			   usartClearTcFlag(usart);
@@ -367,7 +369,6 @@ void USART1_IRQHandler(void){
 		   if(info->rxLength == info->rxCount){
 			   if(*receiveBuffer == MASTER_ADDRESS){
 				   gpioToggleBit(gpioB, PIN_13);
-				   strcpy(data, info->usartRxBuffer);
 				   usartDisableInterrupt(usart,RXNE_INTERRUPT);
 				   usartDisableReceiver(usart);
 				   usartDisableTransmission(usart);

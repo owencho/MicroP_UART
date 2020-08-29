@@ -14,14 +14,18 @@
 #include <stdlib.h>
 
 extern UsartInfo usartInfo[] ;
-UsartInfo * info = &usartInfo[MASTER];
+
 BlinkyState buttonState = BUTTON_WAIT;
 char adcRead [] = {0x21,ADC_ADDRESS,0x21, 0xE};
 char ledControl [] = {0x21,LED_ADDRESS , 0x10, 0xE };
 char serialSlave [] = {0x21,SERIAL_ADDRESS , 0x10, 0xE };
 char adcPacket [4];
 char serialPacket [8];
+int adcValue ;
 void handleButtonSM(){
+	disableIRQ();
+	UsartInfo * info = &usartInfo[MASTER];
+	char * buffer = info->usartRxBuffer;
 	switch(buttonState){
 		case BUTTON_WAIT:
 			usartSendMessage(MASTER,adcRead,4);
@@ -57,5 +61,6 @@ void handleButtonSM(){
 			buttonState = BUTTON_WAIT;
 		break;
 	}
+	enableIRQ();
 }
 
