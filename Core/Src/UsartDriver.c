@@ -29,7 +29,7 @@ UsartInfo usartInfo[] = {
 };
 
 void handleUsartSend(UsartRegs * usart , char * transmitBuffer , int count){
-	if(count == ADDRESS_PACKET){
+	if(count == SEND_ADDRESS_PACKET){
 		usartSend(usart,transmitBuffer[count]+ (1<<8));
 	}
 	else{
@@ -66,9 +66,9 @@ void usartSendMessage(UsartPort port,char * message,int length){
     	info->usartTxBuffer = message;
     	info->txLength = length;
     	info->txTurn = 1;
-    	usartEnableTransmission(info->usart);
     	usartEnableInterrupt(info->usart,TRANS_COMPLETE);
     	usartDisableReceiver(info->usart);
+    	usartEnableTransmission(info->usart);
     }
 	enableIRQ();
 }

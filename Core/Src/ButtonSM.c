@@ -12,14 +12,15 @@
 #include "Gpio.h"
 #include "Irq.h"
 #include "String.h"
+#include "InvertCommand.h"
 #include <stdlib.h>
 
 extern UsartInfo usartInfo[] ;
 
 BlinkyState buttonState = BUTTON_WAIT;
-char adcRead [] = {0x21,ADC_ADDRESS,0x21, 0xE};
-char ledControl [] = {0x21,LED_ADDRESS , 0x10, 0xE };
-char serialPacket [8] = {0x21,SERIAL_ADDRESS , 0x10, 0xE };
+char adcRead [4] = {0x21,ADC_ADDRESS,0x21,0x21};
+char ledControl [4] = {0x21,LED_ADDRESS , 0x10,0x10};
+char serialPacket [8] = {0x21,SERIAL_ADDRESS , 0x10,0x10};
 char adcPacket [4];
 int adcValue ;
 void handleButtonSM(){
@@ -28,6 +29,7 @@ void handleButtonSM(){
 	char * buffer = info->usartRxBuffer;
 	switch(buttonState){
 		case BUTTON_WAIT:
+			//adcRead[SEND_INV_CMD_PACKET]=getInvertCommand(adcRead[SEND_CMD_PACKET]);
 			usartSendMessage(MASTER,adcRead,4);
 			buttonState = READ_ADC;
 		break;
@@ -39,10 +41,10 @@ void handleButtonSM(){
 
 		case WAIT_ADC_VALUE:
 			strcpy(adcPacket, buffer+DATA_PACKET);
-			if(ledControl[CMD_PACKET] == 0x12){
-				ledControl[CMD_PACKET] = 0x10;
+			if(ledControl[SEND_CMD_PACKET] == 0x12){
+				ledControl[SEND_CMD_PACKET] = 0x10;
 			}else{
-				ledControl[CMD_PACKET]++;
+				ledControl[SEND_CMD_PACKET]++;
 			}
 			usartSendMessage(MASTER,ledControl,4);
 			buttonState = SEND_CONTROL_LED;

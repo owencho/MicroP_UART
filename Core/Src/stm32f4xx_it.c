@@ -354,7 +354,7 @@ void USART1_IRQHandler(void){
 			   usartDisableInterrupt(usart,TRANS_COMPLETE);
 			   usartDisableTransmission(usart);
 			   usartDisableReceiver(usart);
-			   //info->usartTxBuffer = NULL;
+			   info->usartTxBuffer = NULL;
 			   info->txCount = 0;
 			   info->requestTxPacket = 0;
 			   handleButtonSM();
