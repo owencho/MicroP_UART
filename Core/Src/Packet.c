@@ -26,3 +26,10 @@ void addInvertCommandInPacket(char * data){
 int compareReceivedCommand(char * data){
 	 return (data[RX_CMD_PACKET] == getInvertCommand(data[RX_INV_CMD_PACKET]));
 }
+
+void assignPacketAddressCommand(char * buffer , int address , int command){
+	buffer[0] = 0x0; //fake packet to trigger usart
+	buffer[1] = address;
+	buffer[2] = command;
+	buffer[3] = getInvertCommand(command);
+}

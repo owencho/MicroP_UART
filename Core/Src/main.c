@@ -112,20 +112,20 @@ int main(void)
   initUart4();
   initUart8();
   initUsartInfo();
-  //usartReceiveMessage(MASTER,3);
+
   usartReceiveMessage(ADC_SLAVE,3);
   usartReceiveMessage(LED_SLAVE,3);
   usartReceiveMessage(SERIAL_SLAVE,7);
 
   /* USER CODE END 2 */
- // char adcRead [] = {0x21, SERIAL_ADDRESS , 0x21, 0xE };
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
- // serialSend(PRINT_SLAVE,"lol");
+
   while (1)
   {
     /* USER CODE END WHILE */
-	  //usartSendMessage(MASTER,adcRead,4);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

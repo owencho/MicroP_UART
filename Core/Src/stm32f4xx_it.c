@@ -23,6 +23,7 @@
 #include "Adc.h"
 #include "Exti.h"
 #include "UsartDriver.h"
+#include "Packet.h"
 #include "main.h"
 #include "Usart.h"
 #include "Common.h"
@@ -223,14 +224,14 @@ void TIM3_IRQHandler(void){
 	enableIRQ();
 }
 
-char adcMessage[8]={0x21,MASTER_ADDRESS,0x20};
+char adcMessage[8];
 void ADC_IRQHandler(void){
 	disableIRQ();
 	int newAdcValue ;
 	newAdcValue = adcReadRegularDataReg(adc1);
+	assignPacketAddressCommand(adcMessage , MASTER_ADDRESS , 0x20);
 	*(int*)&adcMessage[4] = newAdcValue;
 	adcDisableEOCInterrupt(adc1);
-	addInvertCommandInPacket(adcMessage);
 	usartSendMessage(ADC_SLAVE,adcMessage,8);
 	enableIRQ();
 }
@@ -369,7 +370,6 @@ void USART1_IRQHandler(void){
 
 		   if(info->rxLength == info->rxCount){
 			   if(*receiveBuffer == MASTER_ADDRESS){
-				   gpioToggleBit(gpioB, PIN_13);
 				   usartDisableInterrupt(usart,RXNE_INTERRUPT);
 				   usartDisableReceiver(usart);
 				   usartDisableTransmission(usart);

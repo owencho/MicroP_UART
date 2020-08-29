@@ -18,19 +18,22 @@
 extern UsartInfo usartInfo[] ;
 
 BlinkyState buttonState = BUTTON_WAIT;
-char adcRead [4] = {0x21,ADC_ADDRESS,0x21};
-char ledControl [4] = {0x21,LED_ADDRESS , 0x10};
-char serialPacket [8] = {0x21,SERIAL_ADDRESS , 0x30};
-char adcPacket [4];
-int adcValue ;
+char adcReadPacket [4];
+char ledControlPacket [4];
+char serialPacket [8];
+//char adcRead [4] = {0x21,ADC_ADDRESS,0x21};
+//char ledControl [4] = {0x21,LED_ADDRESS , 0x10};
+//char serialPacket [8] = {0x21,SERIAL_ADDRESS , 0x30};
+char adcData [4];
+int ledMode = 0x10;
 void handleButtonSM(){
 	disableIRQ();
 	UsartInfo * info = &usartInfo[MASTER];
 	char * buffer = info->usartRxBuffer;
 	switch(buttonState){
 		case BUTTON_WAIT:
-			addInvertCommandInPacket(adcRead);
-			usartSendMessage(MASTER,adcRead,4);
+			assignPacketAddressCommand(adcReadPacket,ADC_ADDRESS,0x21);
+			usartSendMessage(MASTER,adcReadPacket,4);
 			buttonState = READ_ADC;
 		break;
 
@@ -41,14 +44,14 @@ void handleButtonSM(){
 
 		case WAIT_ADC_VALUE:
 			if(compareReceivedCommand(buffer)){
-				strcpy(adcPacket, buffer+RX_DATA_PACKET);
-				if(ledControl[TX_CMD_PACKET] == 0x12){
-					ledControl[TX_CMD_PACKET] = 0x10;
+				strcpy(adcData, buffer+RX_DATA_PACKET);
+				if(ledMode == 0x12){
+					ledMode = 0x10;
 				}else{
-					ledControl[TX_CMD_PACKET]++;
+					ledMode++;
 				}
-				addInvertCommandInPacket(ledControl);
-				usartSendMessage(MASTER,ledControl,4);
+				assignPacketAddressCommand(ledControlPacket,LED_ADDRESS,ledMode);
+				usartSendMessage(MASTER,ledControlPacket,4);
 				buttonState = SEND_CONTROL_LED;
 			}
 			else{
@@ -59,8 +62,8 @@ void handleButtonSM(){
 		break;
 
 		case SEND_CONTROL_LED:
-			memcpy(&serialPacket[4], adcPacket, 4);
-			addInvertCommandInPacket(serialPacket);
+			assignPacketAddressCommand(serialPacket , SERIAL_ADDRESS , 0x30);
+			memcpy(&serialPacket[4], adcData, 4);
 			usartSendMessage(MASTER,serialPacket,8);
 			buttonState = SEND_STRING;
 		break;
