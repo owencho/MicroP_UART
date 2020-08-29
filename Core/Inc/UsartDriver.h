@@ -8,18 +8,7 @@
 #ifndef INC_USARTDRIVER_H_
 #define INC_USARTDRIVER_H_
 #include "Usart.h"
-
-#define SEND_ADDRESS_PACKET 1
-#define SEND_CMD_PACKET 2
-#define SEND_INV_CMD_PACKET 3
-
-#define DATA_PACKET 3
-
-#define TX_NORMAL_SIZE 4
-#define TX_DATA_SIZE 8
-
-#define RX_NORMAL_SIZE 3
-#define RX_DATA_SIZE 7
+#include "PacketMacro.h"
 
 #define MASTER_ADDRESS 10
 #define ADC_ADDRESS 1

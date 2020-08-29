@@ -29,7 +29,7 @@ UsartInfo usartInfo[] = {
 };
 
 void handleUsartSend(UsartRegs * usart , char * transmitBuffer , int count){
-	if(count == SEND_ADDRESS_PACKET){
+	if(count == TX_ADDRESS_PACKET){
 		usartSend(usart,transmitBuffer[count]+ (1<<8));
 	}
 	else{

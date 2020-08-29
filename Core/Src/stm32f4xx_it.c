@@ -223,13 +223,14 @@ void TIM3_IRQHandler(void){
 	enableIRQ();
 }
 
-char adcMessage[8]={0x21,MASTER_ADDRESS,0x21,0xE};
+char adcMessage[8]={0x21,MASTER_ADDRESS,0x20};
 void ADC_IRQHandler(void){
 	disableIRQ();
 	int newAdcValue ;
 	newAdcValue = adcReadRegularDataReg(adc1);
 	*(int*)&adcMessage[4] = newAdcValue;
 	adcDisableEOCInterrupt(adc1);
+	addInvertCommandInPacket(adcMessage);
 	usartSendMessage(ADC_SLAVE,adcMessage,8);
 	enableIRQ();
 }
