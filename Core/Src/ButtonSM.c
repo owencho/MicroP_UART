@@ -35,9 +35,10 @@ void handleButtonSM(){
 
 		case WAIT_ADC_VALUE:
 			strcpy(adcPacket, (info->usartRxBuffer)+DATA_PACKET);
-			ledControl[CMD_PACKET]++;
-			if(ledControl[CMD_PACKET]> 0x12){
+			if(ledControl[CMD_PACKET] == 0x12){
 				ledControl[CMD_PACKET] = 0x10;
+			}else{
+				ledControl[CMD_PACKET]++;
 			}
 			usartSendMessage(MASTER,ledControl,4);
 			buttonState = SEND_CONTROL_LED;
@@ -51,6 +52,7 @@ void handleButtonSM(){
 		break;
 
 		case SEND_STRING:
+			extiSetPendingRegister(exti,PIN_0);
 			extiSetInterruptMaskRegister(exti,PIN_0,NOT_MASKED);
 			buttonState = BUTTON_WAIT;
 		break;
