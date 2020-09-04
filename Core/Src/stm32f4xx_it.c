@@ -386,7 +386,6 @@ void EXTI0_IRQHandler(void){
 	disableIRQ();
 	extiSetInterruptMaskRegister(exti,PIN_0,MASKED);
 	extiSetPendingRegister(exti,PIN_0);
-    gpioToggleBit(gpioB, PIN_13);
     handleMasterSM();
 	enableIRQ();
 }

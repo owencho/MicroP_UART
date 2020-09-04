@@ -26,7 +26,7 @@ char serialPacket [8];
 //char serialPacket [8] = {0x21,SERIAL_ADDRESS , 0x30};
 char adcData [4];
 int ledMode = 0x10;
-
+char receivedCommand;
 void handleMasterSM(){
 	disableIRQ();
 	UsartInfo * info = &usartInfo[MASTER];
@@ -44,7 +44,8 @@ void handleMasterSM(){
 		break;
 
 		case WAIT_ADC_VALUE:
-			if(compareReceivedCommand(buffer)){
+			receivedCommand = *(buffer+RX_CMD_PACKET);
+			if(receivedCommand == 0x20 && compareReceivedCommand(buffer)){
 				strcpy(adcData, buffer+RX_DATA_PACKET);
 				if(ledMode == 0x12){
 					ledMode = 0x10;

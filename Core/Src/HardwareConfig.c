@@ -59,6 +59,10 @@ void configureGpio(){
 	  gpioSetPinSpeed(gpioA,PIN_9,HIGH_SPEED);
 	  gpioSetPinSpeed(gpioA,PIN_10,HIGH_SPEED);
 
+	  //Timer3
+	  gpioSetMode(gpioB, PIN_0, GPIO_ALT);
+	  gpioSetPinSpeed(gpioB, PIN_0,HIGH_SPEED);
+	  gpioSetAlternateFunction(gpioB, PIN_0 ,AF2); //set PB0 as TIM3_CH3
 
 	  //Uart 5
 	  enableGpio(PORT_C);

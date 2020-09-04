@@ -22,7 +22,8 @@ extern UsartInfo usartInfo[] ;
 
 void handleADCSlave(char *data){
 	disableIRQ();
-	if(compareReceivedCommand(data)){
+	char command = *(data+RX_CMD_PACKET);
+	if(command == 0x21 && compareReceivedCommand(data)){
 		adcEnableEOCInterrupt(adc1);
 		adcSetStartRegularConversion(adc1);
 	}
@@ -51,6 +52,7 @@ void handleLEDSlave(char *data){
 void handleSerialSlave(char *data){
 	disableIRQ();
 	int adcValue;
+	//char command = *(data+RX_CMD_PACKET);
 	if(compareReceivedCommand(data)){
 		adcValue = *(int*)&data[RX_DATA_PACKET];
 		serialSend(PRINT_SLAVE,"adc value is %d \r\n",adcValue);

@@ -33,3 +33,4 @@ void assignPacketAddressCommand(char * buffer , int address , int command){
 	buffer[2] = command;
 	buffer[3] = getInvertCommand(command);
 }
+
