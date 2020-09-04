@@ -166,7 +166,7 @@ void initUart8(){
 	  //set baud with BRR
 	  usartSetBaudRate(uart8,115200);
 	  // Set Address as slave 1
-	  usartSetUsartAddressNode(uart8,10);
+	  //usartSetUsartAddressNode(uart8,10);
 	  //disable parity control
 	  usartDisableParityControl(uart8);
 	  //set 9 bit

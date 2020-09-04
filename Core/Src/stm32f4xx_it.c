@@ -27,14 +27,13 @@
 #include "main.h"
 #include "Usart.h"
 #include "Common.h"
-#include "ButtonSM.h"
+#include "MasterSM.h"
 #include "SlaveHandler.h"
 #include "Gpio.h"
 #include "Rcc.h"
 #include "Timer.h"
 #include "BaseAddress.h"
 #include "stm32f4xx_it.h"
-#include "ButtonSM.h"
 #include <stdlib.h>
 #include <string.h>
 /* Private includes ----------------------------------------------------------*/
@@ -359,7 +358,7 @@ void USART1_IRQHandler(void){
 			   info->usartTxBuffer = NULL;
 			   info->txCount = 0;
 			   info->requestTxPacket = 0;
-			   handleButtonSM();
+			   handleMasterSM();
 		   }
 	}
 	else{
@@ -373,7 +372,7 @@ void USART1_IRQHandler(void){
 				   usartDisableInterrupt(usart,RXNE_INTERRUPT);
 				   usartDisableReceiver(usart);
 				   usartDisableTransmission(usart);
-				   handleButtonSM();
+				   handleMasterSM();
 				   info->requestRxPacket = 0;
 			   }
 			   info->rxCount = 0;
@@ -388,7 +387,7 @@ void EXTI0_IRQHandler(void){
 	extiSetInterruptMaskRegister(exti,PIN_0,MASKED);
 	extiSetPendingRegister(exti,PIN_0);
     gpioToggleBit(gpioB, PIN_13);
-	handleButtonSM();
+    handleMasterSM();
 	enableIRQ();
 }
 /* USER CODE END 1 */

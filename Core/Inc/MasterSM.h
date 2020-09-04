@@ -5,8 +5,8 @@
  *      Author: academic
  */
 
-#ifndef INC_BUTTONSM_H_
-#define INC_BUTTONSM_H_
+#ifndef INC_MASTERSM_H_
+#define INC_MASTERSM_H_
 
 typedef enum{
     BUTTON_WAIT,
@@ -14,8 +14,8 @@ typedef enum{
     WAIT_ADC_VALUE,
     SEND_CONTROL_LED,
     SEND_STRING,
-} BlinkyState;
+} MasterState;
 
-void handleButtonSM();
+void handleMasterSM();
 
-#endif /* INC_BUTTONSM_H_ */
+#endif /* INC_MASTERSM_H_ */

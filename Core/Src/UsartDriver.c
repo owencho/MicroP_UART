@@ -35,8 +35,8 @@ void handleUsartSend(UsartRegs * usart , char * transmitBuffer , int count){
 	else{
 		usartSend(usart,transmitBuffer[count]);
 	}
-
 }
+
 void usartInfoConfig(UsartPort port,UsartRegs * usart){
     disableIRQ();
     UsartInfo * info =&usartInfo[port];

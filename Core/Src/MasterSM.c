@@ -5,8 +5,8 @@
  *      Author: academic
  */
 
+#include <MasterSM.h>
 #include <Packet.h>
-#include "ButtonSM.h"
 #include "Exti.h"
 #include "Usart.h"
 #include "UsartDriver.h"
@@ -17,7 +17,7 @@
 
 extern UsartInfo usartInfo[] ;
 
-BlinkyState buttonState = BUTTON_WAIT;
+MasterState buttonState = BUTTON_WAIT;
 char adcReadPacket [4];
 char ledControlPacket [4];
 char serialPacket [8];
@@ -26,7 +26,8 @@ char serialPacket [8];
 //char serialPacket [8] = {0x21,SERIAL_ADDRESS , 0x30};
 char adcData [4];
 int ledMode = 0x10;
-void handleButtonSM(){
+
+void handleMasterSM(){
 	disableIRQ();
 	UsartInfo * info = &usartInfo[MASTER];
 	char * buffer = info->usartRxBuffer;

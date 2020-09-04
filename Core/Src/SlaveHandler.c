@@ -25,9 +25,8 @@ void handleADCSlave(char *data){
 	if(compareReceivedCommand(data)){
 		adcEnableEOCInterrupt(adc1);
 		adcSetStartRegularConversion(adc1);
-		enableIRQ();
 	}
-
+	enableIRQ();
 }
 
 void handleLEDSlave(char *data){
