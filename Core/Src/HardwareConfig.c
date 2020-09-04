@@ -66,11 +66,11 @@ void configureGpio(){
 
 	  //Uart 5
 	  enableGpio(PORT_C);
-	  gpioSetMode(gpioC, PIN_12, GPIO_ALT);  //set GpioC as alternate mode
+	  gpioSetMode(gpioC, PIN_12, GPIO_ALT);
 	  gpioSetPinSpeed(gpioC,PIN_12,HIGH_SPEED);
 
 	  enableGpio(PORT_D);
-	  gpioSetMode(gpioD, PIN_2, GPIO_ALT);  //set GpioC as alternate mode
+	  gpioSetMode(gpioD, PIN_2, GPIO_ALT);
 	  gpioSetPinSpeed(gpioD,PIN_2,HIGH_SPEED);
 
 	  //uart4
@@ -102,7 +102,7 @@ void initUsart1(){
 	  setUsartOversamplingMode(usart1,OVER_16);
 	  //set baud with BRR
 	  usartSetBaudRate(usart1,115200);
-	  // Set Address as slave 1
+	  // Set Address as 10 for master
 	  usartSetUsartAddressNode(usart1,10);
 	  // set as address mark for wake up
 	  setUsartWakeupMode(usart1,ADDRESS_MARK);
@@ -143,7 +143,7 @@ void initUsart6(){
 
 	  // RCC APB1 and APB2 peripheral clock enable reg
 	  enableUSART6();
-	  //configure uart5 as slave
+	  //configure uart6 as slave
 	  initUsartSlave(usart6 ,2, 71);
 }
 
@@ -154,7 +154,7 @@ void initUart4(){
 
 	  // RCC APB1 and APB2 peripheral clock enable reg
 	  enableUART4();
-	  //configure uart5 as slave
+	  //configure uart4 as slave
 	  initUsartSlave(uart4 ,3, 52);
 }
 
@@ -165,12 +165,9 @@ void initUart8(){
 
 	  // RCC APB1 and APB2 peripheral clock enable reg
 	  enableUART8();
-	  //configure uart5 as slave
 	  setUsartOversamplingMode(uart8,OVER_16);
 	  //set baud with BRR
 	  usartSetBaudRate(uart8,115200);
-	  // Set Address as slave 1
-	  //usartSetUsartAddressNode(uart8,10);
 	  //disable parity control
 	  usartDisableParityControl(uart8);
 	  //set 9 bit
@@ -189,7 +186,7 @@ void initUsartSlave(UsartRegs * usart ,int slaveAddress, int nvicNumber){
 	  setUsartOversamplingMode(usart,OVER_16);
 	  //set baud with BRR
 	  usartSetBaudRate(usart,115200);
-	  // Set Address as slave 1
+	  // Set slave address
 	  usartSetUsartAddressNode(usart,slaveAddress);
 	  // set as address mark for wake up
 	  setUsartWakeupMode(usart,ADDRESS_MARK);
@@ -213,17 +210,14 @@ void initUsartSlave(UsartRegs * usart ,int slaveAddress, int nvicNumber){
 void configureAdc1(){
 	  enableAdc1();
 	  //enable interrupt
-	  //adcEnableEOCInterrupt(adc1);
 	  adcSetScanMode(adc1,ENABLE_MODE);
 	  nvicEnableInterrupt(18);
 	  adcSetADCResolution(adc1,ADC_RES_12_BIT);
 	  adcSetRightDataAlignment(adc1);
 	  adcSetSingleConvertion(adc1);
-	  //adcSetContinousConvertion(adc1);
 	  adcSetSamplingTime(adc1,CHANNEL_1,ADC_SAMP_3_CYCLES);
 	  adcSetSingleSequenceRegister(adc1,CHANNEL_1,1);
 	  adcEnableADCConversion(adc1);
-	  //adcSetStartRegularConversion(adc1);
 }
 
 void configureTimer3(){
@@ -248,7 +242,7 @@ void configureTimer3(){
 
 	  timerSetCompareCaptureEnableRegister(timer3,(OC3_ENABLE|OC3_ACTIVELOW));
 
-	  //to generate 50hz with 50% duty cycle
+	  //to generate 5hz with 50% duty cycle
 	  timerWritePrescaler(timer3,27);
 	  timerWriteAutoReloadReg(timer3, 65535);
 	  timerWriteCapComReg3(timer3 , 32767);
