@@ -52,8 +52,8 @@ void handleLEDSlave(char *data){
 void handleSerialSlave(char *data){
 	disableIRQ();
 	int adcValue;
-	//char command = *(data+RX_CMD_PACKET);
-	if(compareReceivedCommand(data)){
+	char command = *(data+RX_CMD_PACKET);
+	if(command ==0x30 && compareReceivedCommand(data)){
 		adcValue = *(int*)&data[RX_DATA_PACKET];
 		serialSend(PRINT_SLAVE,"adc value is %d \r\n",adcValue);
 	}
